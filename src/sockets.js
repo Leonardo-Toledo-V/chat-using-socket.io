@@ -6,8 +6,9 @@ module.exports = function(io){
     io.on('connection',socket =>{
         console.log('New user connected');
         
-        socket.on('message',(data, cb)=> {
-            var msg = data.trim();
+        socket.on('message',(data)=> {
+            console.log(data + 'Hola mundo')
+            var msg = data.text.trim();
             if(msg.substr(0,3)=== '/p '){
                 msg = msg.substr(3);
                 const index = msg.indexOf(' ');
@@ -27,8 +28,9 @@ module.exports = function(io){
                 }
             }else{
                 io.sockets.emit('new message', {
-                    msg:data,
-                    nick: socket.nickname
+                    msg: data.text,
+                    nick:socket.nickname,
+                    img: data.img
                 });
             }
         });
@@ -53,5 +55,6 @@ module.exports = function(io){
         function updateNicknames(){
             io.sockets.emit('usernames', Object.keys(users));
         }
+
     });
 }

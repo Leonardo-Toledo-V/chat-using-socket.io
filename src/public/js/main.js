@@ -1,54 +1,72 @@
-$(function() {
+window.addEventListener('DOMContentLoaded', () => {
     const socket = io();
-    //Obtaining DOM element from the interface
-    const messageForm= $('#message-form');
-    const messageBox= $('#message');
-    const chat= $('#chat');
-    
-    const nickForm = $('#nickForm');
-    const nickError = $('#nickError');
-    const nickName = $('#nickName');
+    const messageForm = document.getElementById('message-form');
+    const messageBox = document.getElementById('message');
+    const chat = document.getElementById('chat');
+    const nickForm = document.getElementById('nickForm');
+    const nickError = document.getElementById('nickError');
+    const nickName = document.getElementById('nickName');
+    const users = document.getElementById('usernames');
+    const foto = document.getElementById('archivo-enviar');
+    let binary = undefined;
 
-    const users = $('#usernames');
-
-    nickForm.submit(e=>{
+    nickForm.addEventListener('submit', e => {
         e.preventDefault();
-        socket.emit('new user',nickName.val(), data=>{
-            if(data){
-                $('#nickWrap').hide();
-                $('#contentWrap').removeClass('contentWrap');
-            }else{
-               nickError.html(`
-            <div class="font-bold text-red-700">
-                El nombre del usuario ya existe
-            </div>
-               `);
+        socket.emit('new user', nickName.value, data => {
+            if (data) {
+                document.getElementById('nickWrap').style.display = 'none';
+                document.getElementById('contentWrap').classList.remove('contentWrap');
+            } else {
+                nickError.innerHTML = `
+          <div class="font-bold text-red-700">
+            El nombre del usuario ya existe
+          </div>
+        `;
             }
-            nickName.val('');
+            nickName.value = '';
         });
     });
 
-    messageForm.submit( e => {
+    messageForm.addEventListener('submit', e => {
         e.preventDefault();
-        socket.emit('message',messageBox.val(), data=>{
-            chat.append(`<p class="error">${data}</p>`)
+        console.log(binary);
+        socket.emit('message', {text: messageBox.value, img: binary}, data => {
+            chat.insertAdjacentHTML('beforeend', `<p class="error">${data}</p>`);
         });
-        messageBox.val('');
-    });
-    socket.on('new message', function(data) {
-        chat.append('<b>' + data.nick + '</b>'+' : '+ data.msg + '<br/>');
+        messageBox.value = '';
     });
 
-    socket.on('usernames', data=>{
-        let html= '';
-        for (let i=0; i<data.length; i++){
-            html += `<p><i class="fas fa-user"> </i>    ${data[i]}</p>`
+    socket.on('new message', data => {
+        if (data.img !== undefined) {
+            const imagen = document.createElement('img');
+            imagen.src = data.img;
+            chat.appendChild(imagen);
         }
-        users.html(html);
+        chat.insertAdjacentHTML('beforeend', `<b>${data.nick}: </b>${data.msg}<br>`);
     });
 
-    socket.on('private',data =>{
-        chat.append(`<p class="whisper"><b>${data.nick}: </b>${data.msg}</p>`);
+    socket.on('usernames', data => {
+        let html = '';
+        for (let i = 0; i < data.length; i++) {
+            html += `<p><i class="fas fa-user"></i> ${data[i]}</p>`;
+        }
+        users.innerHTML = html;
     });
+
+    socket.on('private', data => {
+        chat.insertAdjacentHTML('beforeend', `<p class="whisper"><b>${data.nick}: </b>${data.msg}</p>`);
+    });
+
+    foto.addEventListener('change', e =>{
+        const archivo = e.target.files[0];
+        const reader = new FileReader();
+        reader.onloadend = () =>{
+            binary = reader.result;
+        };
+        reader.readAsDataURL(archivo);
+    })
 });
+
+
+
 
