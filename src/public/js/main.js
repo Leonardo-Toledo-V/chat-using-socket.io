@@ -30,7 +30,9 @@ $(function() {
 
     messageForm.submit( e => {
         e.preventDefault();
-        socket.emit('message',messageBox.val());
+        socket.emit('message',messageBox.val(), data=>{
+            chat.append(`<p class="error">${data}</p>`)
+        });
         messageBox.val('');
     });
     socket.on('new message', function(data) {
@@ -43,6 +45,10 @@ $(function() {
             html += `<p><i class="fas fa-user"> </i>    ${data[i]}</p>`
         }
         users.html(html);
+    });
+
+    socket.on('private',data =>{
+        chat.append(`<p class="whisper"><b>${data.nick}: </b>${data.msg}</p>`);
     });
 });
 
