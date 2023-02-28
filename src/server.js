@@ -6,10 +6,18 @@ const app = express();
 const server = http.createServer(app);
 const io = new socketio.Server(server);
 const port = 3000;
-const rateLimit = require("express-rate-limit");
+const rateLimit = require('express-rate-limit');
 
 app.set('port', process.env.PORT || port);
 
+// Limitar el número de conexiones por dirección IP
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutos
+    max: 15, // límite de 15 conexiones por IP
+    message: 'Demasiadas conexiones desde esta dirección IP, intente de nuevo en unos minutos.'
+});
+
+app.use(limiter);
 
 require('./sockets')(io);
 
