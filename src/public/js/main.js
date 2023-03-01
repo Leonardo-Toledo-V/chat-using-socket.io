@@ -55,14 +55,25 @@ nickForm.addEventListener("submit", (e) => {
     e.preventDefault();
     socket.emit("new user", nickName.value, (data) => {
         if (data) {
-            Swal.fire({
-                position: 'center',
-                title: 'Bienvenido al chat '+ nickName.value,
-                showConfirmButton: false,
-                timer: 1000
-              });
-            document.getElementById("nickWrap").style.display = "none";
-            document.getElementById("contentWrap").classList.remove("contentWrap");
+            if(nickName.value === ''){
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Ingresa un nombre de usuario',
+                    showConfirmButton: false,
+                    timer: 1500
+                  })
+                  return;
+            }else{
+                Swal.fire({
+                    position: 'center',
+                    title: 'Bienvenido al chat '+ nickName.value,
+                    showConfirmButton: false,
+                    timer: 1000
+                  });
+                document.getElementById("nickWrap").style.display = "none";
+                document.getElementById("contentWrap").classList.remove("contentWrap");
+            }
         } else { Swal.fire({
             position: 'center',
             icon: 'error',
