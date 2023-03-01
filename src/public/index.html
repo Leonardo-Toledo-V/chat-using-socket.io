@@ -49,16 +49,6 @@
       </div>
     <!-- Formulario -->
     <div class="container mx-auto flex contentWrap" id="contentWrap">
-        <div class="md:w-1/2 p-4">
-            <div class="bg-gray-900 text-gray-300 font-bold">
-                <div class="bg-primary p-4 text-center">
-                    <h3>Usuarios conectados</h3>
-                </div>
-                <div>
-                    <div id="usernames" class="p-4 text-bold text-white"></div>
-                </div>
-            </div>
-        </div>
         <div class="md:w-1/2 mt-4">
           <div class="bg-white rounded-lg shadow-md">
             <div class="p-4 bg-gray-100 border-b border-gray-200">
@@ -75,23 +65,54 @@
                 </div>
               </div>
             </form>
-<!--              <form method="post" action="/subir" enctype="multipart/form-data">-->
-<!--                  <input type="file" name="foto1"  >-->
-<!--                  <br>-->
-<!--                  <input type="submit" class="px-4 py-2 bg-gray-900 text-white font-medium rounded-r-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"value="confirmar">-->
-<!--              </form>-->
+              <br>
+              <!-- Seccion upload archivos -->
+              <form id="uploadForm" enctype="multipart/uploadForm">
+                <div class="p-4 my-0 bg-gray-100 border-gray-200">
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <input type="file" name="file" id="fileInput" 
+                      class="file:bg-gray-900
+                              file:px-6 file:py-2 file:m-2
+                              file:border-none 
+                              file:rounded-sm
+                              file:text-white
+                              file:cursor-pointer
+                              file:w-72
+                              text-gray-900
+                              w-72
+                              p-0
+                      " />
+                    </div>
+                    <div class="w-48 my-2 mx-20 lg:mx-36 xl:mx-48">
+                      <button type="submit" class="px-4 py-2 bg-gray-900 text-white font-medium rounded-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                        <i class="fas fa-upload"></i> Subir
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+
           </div>
         </div>
         <!--Apartado de usuarios conectados -->
-
+        <div class="md:w-1/2 p-4">
+            <div class="bg-gray-900 text-gray-300 font-bold">
+              <div class="bg-primary p-4 text-center">
+                <h3>Usuarios conectados</h3>
+              </div>
+              <div>
+                <div id="usernames" class="p-4 text-bold text-white"></div>
+              </div>
+            </div>
+          </div>
           
       </div>
       
       
 
-
-      <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
-    <script src="/socket.io/socket.io.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="/socket.io/socket.io.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

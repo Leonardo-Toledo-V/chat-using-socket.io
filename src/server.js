@@ -10,14 +10,14 @@ const rateLimit = require('express-rate-limit');
 
 app.set('port', process.env.PORT || port);
 
-// Limitar el número de conexiones por dirección IP
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutos
-    max: 15, // límite de 15 conexiones por IP
+//Limitar el número de conexiones por dirección IP
+/*  const limiter = rateLimit({
+   windowMs: 15 * 60 * 1000, // 15 minutos
+   max: 3 * 4, // límite de 3 conexiones por IP, el archivo html, consume 4 peticiones por 1 peticion que haga el usuario
     message: 'Demasiadas conexiones desde esta dirección IP, intente de nuevo en unos minutos.'
 });
 
-app.use(limiter);
+app.use(limiter); */
 
 require('./sockets')(io);
 
