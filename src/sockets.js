@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 
 module.exports = function(io){
     let users = {
@@ -6,8 +8,7 @@ module.exports = function(io){
     io.on('connection',socket =>{
         console.log('New user connected');
         
-        socket.on('message',(data)=> {
-            console.log(data + 'Hola mundo')
+        socket.on('message',(data, cb)=> {
             var msg = data.text.trim();
             if(msg.substr(0,3)=== '/p '){
                 msg = msg.substr(3);
@@ -21,10 +22,10 @@ module.exports = function(io){
                             nick: socket.nickname
                         });
                     }else{
-                        cb('Por favor entra un nombre de usuario valido');
+                        cb('command /p need a user and message');
                     }
                 }else {
-                    cb('Por favor ingresa un mensaje')
+                    cb('command /p need a user and message')
                 }
             }else{
                 io.sockets.emit('new message', {
@@ -56,5 +57,21 @@ module.exports = function(io){
             io.sockets.emit('usernames', Object.keys(users));
         }
 
+
+        socket.on('upload', (data) => {
+            const file = data.file;
+            const fileName = data.fileName;
+          
+            // Escribir el archivo en la carpeta de uploads
+            fs.writeFile(path.join(__dirname, 'public', 'upload', fileName), file, { encoding: 'binary' }, (err) => {
+              if (err) {
+                socket.emit('uploadError');
+              } else {
+                console.log('Archivo guardado exitosamente: ' + fileName);
+                socket.emit('uploadSuccess');
+                io.sockets.emit('anuncio');
+              }
+            });
+          });
     });
 }
