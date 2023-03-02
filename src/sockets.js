@@ -77,10 +77,16 @@ module.exports = function (io) {
                     } else {
                         console.log("Archivo guardado exitosamente: " + fileName);
                         socket.emit("uploadSuccess");
-                        io.sockets.emit("anuncio");
+                       const advise = " ha enviado un archivo";
+                       io.sockets.emit("anuncio",{
+                           msg:advise,
+                           nick: socket.nickname,
+                           img: fileName
+                       });
                     }
                 }
             );
         });
+
     });
 };

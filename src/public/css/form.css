@@ -14,9 +14,6 @@
 .color-active:focus{
     color: green;
 }
-.color-active:not(:focus){
-    color: white;
-}
 
 
   

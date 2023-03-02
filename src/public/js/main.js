@@ -8,13 +8,14 @@ const nickName = document.getElementById("nickName");
 const users = document.getElementById("usernames");
 const uploadForm = document.getElementById("uploadForm");
 const fileInput = document.getElementById("fileInput");
+let currentName = "";
+let imagen = "";
 
 
 function privateMessage(boton){
     const id = boton.id;
     console.log(id);
-    const command  = "/p "+id+ " ";
-    messageBox.value = command;
+    messageBox.value = "/p " + id + " ";
 }
 
 uploadForm.addEventListener("submit", (event) => {
@@ -24,9 +25,10 @@ uploadForm.addEventListener("submit", (event) => {
     console.log(file);
     const fileName = file.name;
     console.log(fileName);
+    imagen = fileName;
            // emitir evento al servidor para subir el archivo
              socket.emit("upload", { file, fileName });
-        
+             socket.emit("mandarArchivo",{file});
 });
 
 socket.on("uploadSuccess", () => {
@@ -48,20 +50,37 @@ socket.on("uploadError", () => {
       })
 });
 
-socket.on('anuncio', () => {
-    let mensaje = 'Alguien ha mandado un archivo'
-    chat.insertAdjacentHTML(
+socket.on('anuncio', (data) => {
+     chat.insertAdjacentHTML(
         "beforeend",
-        `<p class="whisper"><b>${mensaje}</b></p>`
+        `<button onclick="mostrarImagenes('${data.img}')"  class="whisper"><b>${data.nick}</b>${data.msg}</button></br>`
     );
 });
 
+
+
+    function mostrarImagenes(imagen){
+        let extension = imagen.split(".")
+        extension = extension[extension.length-1].toLowerCase();
+        if (extension === 'png'||extension === 'jpg'||extension === 'jpeg'||extension === 'svg'){
+            Swal.fire({
+                imageUrl: '/upload/'+imagen,
+                imageWidth: 400,
+                imageHeight: 200,
+                imageAlt: 'Custom image',
+            })
+        }else{
+            Swal.fire('Mandó un archivo '+ extension);
+        }
+
+    }
 
 
 nickForm.addEventListener("submit", (e) => {
     e.preventDefault();
     socket.emit("new user", nickName.value, (data) => {
         if (data) {
+            currentName = nickName.value;
             if(nickName.value === ''){
                 Swal.fire({
                     position: 'center',
@@ -74,7 +93,7 @@ nickForm.addEventListener("submit", (e) => {
             }else{
                 Swal.fire({
                     position: 'center',
-                    title: 'Bienvenido al chat '+ nickName.value,
+                    title: 'Bienvenido al chat '+ currentName,
                     showConfirmButton: false,
                     timer: 1000
                   });
@@ -111,7 +130,9 @@ socket.on("new message", (data) => {
 socket.on("usernames", (data) => {
     let html = "";
     for (let i = 0; i < data.length; i++) {
-        html += `<button onclick="privateMessage(this)" id="${data[i]}" class="color-active" ><i class="fas fa-user"></i> ${data[i]}</button><br>`;
+        if (data[i]!== currentName){
+            html += `<button onclick="privateMessage(this)" id="${data[i]}" class="color-active" ><i class="fas fa-user"></i> ${data[i]}</button><br>`;
+        }
     }
     users.innerHTML = html;
 });
