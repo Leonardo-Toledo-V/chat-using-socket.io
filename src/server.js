@@ -17,7 +17,7 @@ app.set('port', process.env.PORT || port);
     message: 'Demasiadas conexiones desde esta dirección IP, intente de nuevo en unos minutos.'
 });
 
-//app.use(limiter);
+app.use(limiter);
 
 require('./sockets')(io);
 

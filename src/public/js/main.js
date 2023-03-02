@@ -1,4 +1,3 @@
-let binary = undefined;
 const socket = io();
 const messageForm = document.getElementById("message-form");
 const messageBox = document.getElementById("message");
@@ -9,7 +8,6 @@ const users = document.getElementById("usernames");
 const uploadForm = document.getElementById("uploadForm");
 const fileInput = document.getElementById("fileInput");
 let currentName = "";
-let imagen = "";
 
 
 function privateMessage(boton){
@@ -26,9 +24,8 @@ uploadForm.addEventListener("submit", (event) => {
     const fileName = file.name;
     console.log(fileName);
     imagen = fileName;
-           // emitir evento al servidor para subir el archivo
-             socket.emit("upload", { file, fileName });
-             socket.emit("mandarArchivo",{file});
+    // emitir evento al servidor para subir el archivo
+    socket.emit("upload", { file, fileName });
 });
 
 socket.on("uploadSuccess", () => {
@@ -70,7 +67,7 @@ socket.on('anuncio', (data) => {
                 imageAlt: 'Custom image',
             })
         }else{
-            Swal.fire('Mandó un archivo '+ extension);
+            Swal.fire('Mandó un archivo de nombre:  '+ imagen);
         }
 
     }
@@ -114,7 +111,7 @@ nickForm.addEventListener("submit", (e) => {
 
 messageForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    socket.emit("message", { text: messageBox.value, img: binary }, (data) => {
+    socket.emit("message", { text: messageBox.value}, (data) => {
         chat.insertAdjacentHTML("beforeend", `<p class="error">${data}</p>`);
     });
     messageBox.value = "";
