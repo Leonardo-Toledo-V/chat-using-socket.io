@@ -27,11 +27,14 @@ module.exports = function (io) {
                     cb("command /p need a user and message");
                 }
             } else {
-                io.sockets.emit("new message", {
-                    msg: data.text,
-                    nick: socket.nickname,
-                    img: data.img,
-                });
+                if(msg != ''){
+                    io.sockets.emit("new message", {
+                        msg: data.text,
+                        nick: socket.nickname,
+                        img: data.img,
+                    });
+                }
+
             }
         });
 

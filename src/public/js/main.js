@@ -4,11 +4,18 @@ const messageForm = document.getElementById("message-form");
 const messageBox = document.getElementById("message");
 const chat = document.getElementById("chat");
 const nickForm = document.getElementById("nickForm");
-const nickError = document.getElementById("nickError");
 const nickName = document.getElementById("nickName");
 const users = document.getElementById("usernames");
 const uploadForm = document.getElementById("uploadForm");
 const fileInput = document.getElementById("fileInput");
+
+
+function privateMessage(boton){
+    const id = boton.id;
+    console.log(id);
+    const command  = "/p "+id+ " ";
+    messageBox.value = command;
+}
 
 uploadForm.addEventListener("submit", (event) => {
     event.preventDefault(); // evitar envío por solicitud HTTP
@@ -95,13 +102,16 @@ messageForm.addEventListener("submit", (e) => {
 });
 
 socket.on("new message", (data) => {
+    if(data.message === ''){
+        return;
+    }
     chat.insertAdjacentHTML("beforeend", `<b>${data.nick}: </b>${data.msg}<br>`);
 });
 
 socket.on("usernames", (data) => {
     let html = "";
     for (let i = 0; i < data.length; i++) {
-        html += `<p><i class="fas fa-user"></i> ${data[i]}</p>`;
+        html += `<button onclick="privateMessage(this)" id="${data[i]}" class="color-active" ><i class="fas fa-user"></i> ${data[i]}</button><br>`;
     }
     users.innerHTML = html;
 });
